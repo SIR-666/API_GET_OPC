@@ -1,25 +1,13 @@
+const express = require('express');
 const { OPCUAClient, AttributeIds, resolveNodeId } = require("node-opcua");
 
+const app = express();
+const port = 3000;
+
 // OPC UA connection details
-//const opcUrl = "opc.tcp://GFOPC01PL:49320";
 const opcUrl = "opc.tcp://10.24.7.203:49320";
 const itemsToRead = [
-  //  "AB_Network_02.CIP Filling.Return temperature CIP03",
-   // "AB_Network_02.CIP Filling.Return temperature CIP02",
-   // "AB_Network_02.CIP Filling.Return temperature CIP01",
-   // "AB_Network_02.CIP Filling.Pressure temperature CIP02",
-   // "AB_Network_02.CIP Filling.Pressure temperature CIP01",
-   // "AB_Network_02.CIP Filling.Flow rate CIP03",
-   // "AB_Network_02.CIP Filling.Flow rate CIP02",
-   // "AB_Network_02.CIP Filling.Flow rate CIP01",
-   // "AB_Network_02.CIP Filling.Differential_Press_FG",
-   // "AB_Network_02.CIP Filling.Differential_Press_BC",
-   // "AB_Network_02.CIP Filling.Conductivity CIP03",
-   // "AB_Network_02.CIP Filling.Conductivity CIP02",
-   // "AB_Network_02.CIP Filling.Conductivity CIP01",
-   // "AB_Network_02.CIP Filling._CipConnectionSizeRequested",
-  //  "AB_Network_02.CIP Filling._CipConnectionSizeActual"
-"AB_Network_02.Packing PB.bFL_AirPressureLow",
+    "AB_Network_02.Packing PB.bFL_AirPressureLow",
 "AB_Network_02.Packing PB.bFL_AuxMCB_IsOpen",
 "AB_Network_02.Packing PB.bFL_BoxAtInfeedCollatorJammed",
 "AB_Network_02.Packing PB.bFL_BoxAtPusherAtStation2",
@@ -120,10 +108,10 @@ const itemsToRead = [
 "AB_Network_02.Packing PB.Application_FaultStatus3"
 ];
 
-// Fetch OPC UA data
+// Function to fetch OPC UA data
 async function fetchOpcData() {
-    console.log("trial");	
     const client = OPCUAClient.create({ endpointMustExist: false });
+    const results = [];
 
     try {
         // Connect to OPC UA server
@@ -132,29 +120,43 @@ async function fetchOpcData() {
 
         const session = await client.createSession();
         console.log("Session created.");
-       while(1)
-	{	
+
         // Fetch OPC data
         for (const item of itemsToRead) {
             try {
                 const nodeId = resolveNodeId(`ns=2;s=${item}`);
                 const dataValue = await session.read({ nodeId, attributeId: AttributeIds.Value });
-                console.log(`${item}: ${dataValue.value.value}`);
+                results.push({ item, value: dataValue.value.value });
             } catch (err) {
                 console.error(`Error reading ${item}: ${err.message}`);
+                results.push({ item, error: err.message });
             }
-       }
-	}
+        }
 
-       //  Close session and disconnect client
+        // Close session and disconnect client
         await session.close();
         console.log("Session closed.");
     } catch (err) {
         console.error(`Error: ${err.message}`);
+        results.push({ error: err.message });
     } finally {
         await client.disconnect();
         console.log("OPC UA client disconnected.");
     }
+
+    return results;
 }
 
-fetchOpcData();
+// API endpoint to get OPC UA data
+app.get('/api/opc-data', async (req, res) => {
+    try {
+        const opcData = await fetchOpcData();
+        res.json({ success: true, data: opcData });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching OPC UA data', error: error.message });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
