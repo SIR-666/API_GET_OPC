@@ -2,12 +2,12 @@ const express = require('express');
 const { OPCUAClient, AttributeIds, resolveNodeId } = require("node-opcua");
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 // OPC UA connection details
 const opcUrl = "opc.tcp://10.24.7.203:49320";
 const itemsToRead = [
-    "AB_Network_02.Packing PB.bFL_AirPressureLow",
+"AB_Network_02.Packing PB.Alarm.bFL_AirPressureLow",
 "AB_Network_02.Packing PB.bFL_AuxMCB_IsOpen",
 "AB_Network_02.Packing PB.bFL_BoxAtInfeedCollatorJammed",
 "AB_Network_02.Packing PB.bFL_BoxAtPusherAtStation2",
@@ -15,8 +15,6 @@ const itemsToRead = [
 "AB_Network_02.Packing PB.bFL_BufferConveyorFeedbackError",
 "AB_Network_02.Packing PB.bFL_DoorSwitch_IsOpen",
 "AB_Network_02.Packing PB.bFL_EmergencyStop_IsOpen",
-"AB_Network_02.Packing PB.bFL_Error_OB",
-"AB_Network_02.Packing PB.bFL_Error_SB",
 "AB_Network_02.Packing PB.bFL_ErrorVacuumCartonWhenOff",
 "AB_Network_02.Packing PB.bFL_ErrorVacuumCartonWhenOn",
 "AB_Network_02.Packing PB.bFL_HotmeltFaulted",
@@ -83,13 +81,7 @@ const itemsToRead = [
 "AB_Network_02.Packing PB.bFL_SideWingBottomLeftErrorAdv",
 "AB_Network_02.Packing PB.bFL_SideWingBottomRightErrorAdv",
 "AB_Network_02.Packing PB.bFL_SolenoidDoorLock_IsOpen",
-"AB_Network_02.Packing PB.BoxJammedConv1",
-"AB_Network_02.Packing PB.BoxJammedConv2",
-"AB_Network_02.Packing PB.BoxJammedConv3",
 "AB_Network_02.Packing PB.CLEAR_Fault",
-"AB_Network_02.Packing PB.Conv1Error",
-"AB_Network_02.Packing PB.Conv2Error",
-"AB_Network_02.Packing PB.Conv3Error",
 "AB_Network_02.Packing PB.Drive_Fault",
 "AB_Network_02.Packing PB.HardwareOverTravelNegative",
 "AB_Network_02.Packing PB.InstError_Fault",
@@ -99,13 +91,18 @@ const itemsToRead = [
 "AB_Network_02.Packing PB.Soft_Over_Torque_Limit",
 "AB_Network_02.Packing PB.START_Fault",
 "AB_Network_02.Packing PB.STOP_Fault",
-"AB_Network_02.Packing PB.UBypassBoxJamInfeed",
-"AB_Network_02.Packing PB.UBypassBoxJamPusherQueue",
-"AB_Network_02.Packing PB.UBypasspneumaticback",
-"AB_Network_02.Packing PB.Application_FaultCode",
-"AB_Network_02.Packing PB.Application_FaultStatus1",
-"AB_Network_02.Packing PB.Application_FaultStatus2",
-"AB_Network_02.Packing PB.Application_FaultStatus3"
+"AB_Network_02.Packing PB.Machine Mode Operator",
+"AB_Network_02.Packing PB.Machine Mode Program",
+"AB_Network_02.Packing PB.Machine State Aborted",
+"AB_Network_02.Packing PB.Machine State Aborting",
+"AB_Network_02.Packing PB.Machine State Clearing",
+"AB_Network_02.Packing PB.Machine State Idle",
+"AB_Network_02.Packing PB.Machine State Resetting",
+"AB_Network_02.Packing PB.Machine State Running",
+"AB_Network_02.Packing PB.Machine State Starting",
+"AB_Network_02.Packing PB.Machine State Stopped",
+"AB_Network_02.Packing PB.Machine State Stopping",
+"AB_Network_02.Packing PB.Hours Meter"
 ];
 
 // Function to fetch OPC UA data
