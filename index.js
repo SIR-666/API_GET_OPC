@@ -7,7 +7,7 @@ const port = 5000;
 // OPC UA connection details
 const opcUrl = "opc.tcp://10.24.7.203:49320";
 const itemsToRead = [
-"AB_Network_02.Packing PB.Alarm.bFL_AirPressureLow",
+"AB_Network_02.Packing PB.bFL_AirPressureLow",
 "AB_Network_02.Packing PB.bFL_AuxMCB_IsOpen",
 "AB_Network_02.Packing PB.bFL_BoxAtInfeedCollatorJammed",
 "AB_Network_02.Packing PB.bFL_BoxAtPusherAtStation2",
