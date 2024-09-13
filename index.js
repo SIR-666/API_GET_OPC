@@ -1,7 +1,10 @@
 const express = require('express');
 const { OPCUAClient, AttributeIds, resolveNodeId } = require("node-opcua");
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
 const port = 5000;
 
 // OPC UA connection details
