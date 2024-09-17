@@ -150,7 +150,88 @@ async function fetchOpcData() {
 // API endpoint to get OPC UA data
 app.get('/api/opc-data', async (req, res) => {
     try {
-        const opcData = await fetchOpcData();
+        //const opcData = await fetchOpcData();
+        app.get('/api/opc-data', async (req, res) => {
+    try {
+        // Create dummy data based on the itemsToRead list
+        const itemsToRead = [
+            "AB_Network_02.Packing PB.bFL_AirPressureLow",
+            "AB_Network_02.Packing PB.bFL_AuxMCB_IsOpen",
+            "AB_Network_02.Packing PB.bFL_BoxAtInfeedCollatorJammed",
+            "AB_Network_02.Packing PB.bFL_BoxAtPusherAtStation2",
+            "AB_Network_02.Packing PB.bFL_BoxAtPusherQueueJammed",
+            "AB_Network_02.Packing PB.bFL_BufferConveyorFeedbackError",
+            // Add the rest of the items from your list...
+            "AB_Network_02.Packing PB.bFL_DoorSwitch_IsOpen",
+            "AB_Network_02.Packing PB.bFL_EmergencyStop_IsOpen",
+            "AB_Network_02.Packing PB.bFL_ErrorVacuumCartonWhenOff",
+            "AB_Network_02.Packing PB.bFL_ErrorVacuumCartonWhenOn",
+            "AB_Network_02.Packing PB.bFL_HotmeltFaulted",
+            "AB_Network_02.Packing PB.bFL_HotmeltNotReady",
+            "AB_Network_02.Packing PB.bFL_InfeedBackConveyorFeedbackError",
+            "AB_Network_02.Packing PB.bFL_InfeedConveyorFeedbackError",
+            "AB_Network_02.Packing PB.bFL_PneuBackErrorAdv",
+            "AB_Network_02.Packing PB.bFL_PneuBackErrorRet",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseLeftErrorAdv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseLeftErrorRet",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseRightErrorAdv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseRightErrorRet",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenLeftErrorAdv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenLeftErrorRet",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenRightErrorAdv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenRightErrorRet",
+            "AB_Network_02.Packing PB.bFL_PneuBridgeErrorAdv",
+            "AB_Network_02.Packing PB.bFL_PneuBridgeErrorRet",
+        ];
+
+         // Create an example type mapping (just for demonstration)
+        const typeMapping = {
+            "bFL_AirPressureLow": "Pressure Sensor",
+            "bFL_AuxMCB_IsOpen": "Auxiliary Switch",
+            "bFL_BoxAtInfeedCollatorJammed": "Jam Detection",
+            "bFL_BoxAtPusherAtStation2": "Position Sensor",
+            "bFL_BoxAtPusherQueueJammed": "Queue Sensor",
+            "bFL_BufferConveyorFeedbackError": "Conveyor Feedback",
+            "AB_Network_02.Packing PB.bFL_DoorSwitch_IsOpen" : "Door Switch Open",
+            "AB_Network_02.Packing PB.bFL_EmergencyStop_IsOpen" : "Emergency Button Pressed",
+            "AB_Network_02.Packing PB.bFL_ErrorVacuumCartonWhenOff" : "Vacum Carton Disabled",
+            "AB_Network_02.Packing PB.bFL_ErrorVacuumCartonWhenOn" : : "Vacum Carton Enabled",
+            "AB_Network_02.Packing PB.bFL_HotmeltFaulted" : "Home Fault Error",
+            "AB_Network_02.Packing PB.bFL_HotmeltNotReady" : "Home Not Ready" ,
+            "AB_Network_02.Packing PB.bFL_InfeedBackConveyorFeedbackError" : "Infeed Back Conveyor Feedback Error",
+            "AB_Network_02.Packing PB.bFL_InfeedConveyorFeedbackError" : : "Infeed Conveyor Feedback Error",
+            "AB_Network_02.Packing PB.bFL_PneuBackErrorAdv" : "Pneumatic Back Error Adv",
+            "AB_Network_02.Packing PB.bFL_PneuBackErrorRet" : "Pneumatic Back Error Ret",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseLeftErrorAdv" : "Pneumatic Bottom Wing Close Left Error Adv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseLeftErrorRet" : "Pneumatic Bottom Wing Close Left Error Ret",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseRightErrorAdv" : "Pneumatic Bottom Wing Close Right Error Adv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingCloseRightErrorRet" : "Pneumatic Bottom Wing Close Right Error Ret",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenLeftErrorAdv" : "Pneumatic Bottom Wing Open Left Error Adv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenLeftErrorRet" : "Pneumatic Bottom Wing Open Left Error Ret",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenRightErrorAdv" : "Pneumatic Bottom Wing Open Right Error Adv",
+            "AB_Network_02.Packing PB.bFL_PneuBottomWingOpenRightErrorRet" : "Pneumatic Bottom Wing Open Right Error Ret",
+            "AB_Network_02.Packing PB.bFL_PneuBridgeErrorAdv" : "Pneumatic Bridge Error Adv",
+            "AB_Network_02.Packing PB.bFL_PneuBridgeErrorRet" : "Pneumatic Bridge Error Ret",
+            // Add more types corresponding to your items
+        };
+
+        
+
+        const opcData = itemsToRead.map(item => {
+            const itemName = item.split('.').pop(); // Extract the item name from the string
+            return {
+                name: item,
+                type: typeMapping[itemName] || 'Unknown', // Get type from mapping or default to 'Unknown'
+                status: Math.random() < 0.5 // Random boolean for dummy status (true or false)
+            };
+        });
+
+        res.json({ success: true, data: opcData });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Error fetching OPC UA data', error: error.message });
+    }
+});
+
         res.json({ success: true, data: opcData });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Error fetching OPC UA data', error: error.message });
